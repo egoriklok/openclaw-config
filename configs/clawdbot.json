@@ -1,0 +1,49 @@
+{
+    "agent": {
+        "name": "Aurora",
+        "model": {
+            "provider": "openrouter",
+            "default": "deepseek/deepseek-r1"
+        }
+    },
+    "heartbeat": {
+        "strategy": "local",
+        "intervalMs": 1800000
+    },
+    "costOptimization": {
+        "enabled": true,
+        "modelDistribution": {
+            "primary": {
+                "model": "deepseek/deepseek-r1",
+                "weight": 0.7
+            },
+            "fallback": {
+                "model": "meta-llama/llama-3.3-70b-instruct",
+                "weight": 0.3
+            }
+        },
+        "sessionCompression": {
+            "enabled": true,
+            "threshold": 4000,
+            "strategy": "summarize"
+        },
+        "promptCaching": {
+            "enabled": true,
+            "ttlSeconds": 3600
+        }
+    },
+    "senders": {
+        "approved": []
+    },
+    "dmPolicy": "allow",
+    "features": {
+        "webSearch": true,
+        "codeExecution": true,
+        "fileAccess": true,
+        "browserControl": false
+    },
+    "rateLimit": {
+        "enabled": true,
+        "requestsPerHour": 100
+    }
+}

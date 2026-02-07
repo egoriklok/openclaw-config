@@ -1,0 +1,30 @@
+# Gateway Configuration
+
+gateway:
+  name: aurora-gateway
+  environment: production
+  
+server:
+  bind: 0.0.0.0
+  port: 8080
+  
+security:
+  token: ${CLAWDBOT_GATEWAY_TOKEN}
+  allowInsecureAuth: true
+  trustedProxies:
+    - 0.0.0.0/0
+  
+controlUI:
+  enabled: true
+  path: /control
+  
+features:
+  chat: true
+  channels: true
+  sessions: true
+  logs: true
+  scheduler: true
+  
+logging:
+  level: info
+  format: json

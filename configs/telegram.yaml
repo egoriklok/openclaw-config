@@ -1,0 +1,45 @@
+# Telegram Channel Configuration
+
+channel:
+  name: telegram
+  enabled: true
+  
+bot:
+  # Token from @BotFather (set via environment variable)
+  token: ${TELEGRAM_BOT_TOKEN}
+  
+connection:
+  mode: polling
+  timeout: 30
+  
+features:
+  markdown: true
+  commands: true
+  groups: false
+  
+pairing:
+  mode: auto  # auto-approve new users
+  
+commands:
+  - name: start
+    description: Start the bot
+  - name: help
+    description: Show help
+  - name: status
+    description: Check bot status
+  - name: clear
+    description: Clear conversation
+
+messages:
+  welcome: |
+    👋 Hello! I'm Aurora, your AI assistant.
+    
+    I can help you with:
+    • Answering questions
+    • Writing code
+    • Web search
+    • Task automation
+    
+    Just send me a message to get started!
+  
+  error: "Sorry, something went wrong. Please try again."
