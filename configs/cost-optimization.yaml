@@ -1,0 +1,81 @@
+# Cost Optimization Configuration
+# Aurora Swarm AI - 97% Cost Savings Settings
+# Based on Matt Ganzac's OpenClaw optimization guide
+
+# =============================================================================
+# SUMMARY OF SAVINGS
+# =============================================================================
+# 1. Heartbeat optimization: 80% savings
+# 2. Multi-model distribution: 10% savings  
+# 3. Session management: 5% savings
+# 4. Prompt caching: 2% savings
+# Total: ~97% reduction in API costs
+
+cost_optimization:
+  enabled: true
+  
+  # ==========================================================================
+  # STEP 1: Heartbeat Optimization (80% savings)
+  # ==========================================================================
+  # Problem: Default heartbeats reload ALL context files every 30 minutes
+  # Each heartbeat with 50K tokens = $0.15 cost
+  # Running 24h idle = 48 heartbeats = $7.20+ daily waste
+  
+  heartbeat:
+    contextRefresh: "local-only"  # Don't send context to API
+    skipContextReload: true       # Skip reloading context files
+    skipSessionHistory: true      # Don't recompile history
+    intervalSeconds: 300          # Check every 5 minutes
+    
+  # ==========================================================================
+  # STEP 2: Multi-Model Distribution (10% savings)
+  # ==========================================================================
+  # Cost per 1K tokens:
+  # - Opus: $3.00 input / $15.00 output
+  # - Sonnet: $3.00 input / $15.00 output
+  # - Haiku: $0.80 input / $2.40 output (75% cheaper!)
+  
+  model_routing:
+    strategy: "cost-optimized"
+    opus_usage: 1%     # Complex reasoning only
+    sonnet_usage: 10%  # General analysis
+    haiku_usage: 75%   # Simple tasks
+    other_usage: 14%   # Fallback
+    
+  # ==========================================================================
+  # STEP 3: Session Compression (5% savings)
+  # ==========================================================================
+  
+  session:
+    compression: enabled
+    maxHistoryLength: 50
+    groupMessages: true
+    compressThreshold: 5000  # Compress if over 5K tokens
+    
+  # ==========================================================================
+  # STEP 4: Prompt Caching (2% savings)
+  # ==========================================================================
+  # Cache costs 90% less: $0.0003 vs $0.003 per 1K tokens
+  
+  cache:
+    enabled: true
+    ttl: 3600              # 1 hour TTL
+    strategy: "prompt-caching"
+    
+  # ==========================================================================
+  # TOKEN TRACKING & MONITORING
+  # ==========================================================================
+  
+  tracking:
+    enabled: true
+    verbose: true
+    logCosts: true
+    alertThreshold: 10.0   # Alert if daily cost exceeds $10
+
+# =============================================================================
+# EXPECTED RESULTS
+# =============================================================================
+# Before optimization: $25+/day for idle agents
+# After optimization: ~$0.75/day
+# Monthly savings: ~$700+
+# Yearly savings: ~$8,400+

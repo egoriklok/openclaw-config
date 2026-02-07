@@ -33,7 +33,9 @@
         }
     },
     "senders": {
-        "approved": []
+        "approved": [
+            "telegram:209498707"
+        ]
     },
     "dmPolicy": "allow",
     "features": {

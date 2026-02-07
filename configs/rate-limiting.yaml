@@ -1,0 +1,85 @@
+# Rate Limiting Configuration
+# Aurora Swarm AI - Per-User and Per-Channel Limits
+
+rate_limiting:
+  enabled: true
+  
+  # Global defaults
+  defaults:
+    requests_per_minute: 30
+    requests_per_hour: 500
+    requests_per_day: 5000
+    burst_allowance: 10
+    
+  # Per-channel limits
+  channels:
+    telegram:
+      enabled: true
+      requests_per_minute: 20
+      requests_per_hour: 300
+      burst_allowance: 5
+      
+    discord:
+      enabled: true
+      requests_per_minute: 30
+      requests_per_hour: 500
+      burst_allowance: 10
+      
+    whatsapp:
+      enabled: true
+      requests_per_minute: 15
+      requests_per_hour: 200
+      burst_allowance: 3
+      
+    slack:
+      enabled: true
+      requests_per_minute: 25
+      requests_per_hour: 400
+      burst_allowance: 8
+
+  # Per-user tiers
+  user_tiers:
+    free:
+      requests_per_minute: 10
+      requests_per_hour: 100
+      requests_per_day: 500
+      max_tokens_per_request: 4000
+      
+    standard:
+      requests_per_minute: 30
+      requests_per_hour: 500
+      requests_per_day: 5000
+      max_tokens_per_request: 8000
+      
+    premium:
+      requests_per_minute: 60
+      requests_per_hour: 1000
+      requests_per_day: 20000
+      max_tokens_per_request: 32000
+      
+    admin:
+      requests_per_minute: 120
+      requests_per_hour: -1  # Unlimited
+      requests_per_day: -1   # Unlimited
+      max_tokens_per_request: -1  # Unlimited
+
+  # Rate limit responses
+  responses:
+    rate_limited:
+      message: "⏱️ You've reached the rate limit. Please wait {wait_time} before trying again."
+      retry_after_header: true
+      
+    quota_exceeded:
+      message: "📊 Daily quota exceeded. Limits reset at midnight UTC."
+      show_reset_time: true
+
+  # Exemptions
+  exemptions:
+    user_ids: []  # Add user IDs to exempt
+    ip_addresses: []  # Add IPs to exempt
+    
+  # Enforcement
+  enforcement:
+    strategy: sliding_window
+    storage: memory  # or: redis
+    redis_url: ${REDIS_URL:-}

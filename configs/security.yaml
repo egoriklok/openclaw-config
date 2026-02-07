@@ -1,0 +1,121 @@
+# Security Configuration
+# Aurora Swarm AI - Webhook Validation & Security Settings
+
+security:
+  enabled: true
+  
+  # Webhook Validation
+  webhooks:
+    telegram:
+      enabled: true
+      # Verify webhook signature using bot token
+      signature_verification: true
+      # Allowed update types
+      allowed_updates:
+        - message
+        - callback_query
+        - inline_query
+      # IP allowlist (Telegram servers)
+      ip_allowlist:
+        - "149.154.160.0/20"
+        - "91.108.4.0/22"
+      # Secret token for webhook verification
+      secret_token: ${TELEGRAM_WEBHOOK_SECRET:-}
+      
+    discord:
+      enabled: true
+      signature_verification: true
+      public_key: ${DISCORD_PUBLIC_KEY:-}
+      
+    slack:
+      enabled: true
+      signature_verification: true
+      signing_secret: ${SLACK_SIGNING_SECRET:-}
+      timestamp_tolerance_seconds: 300
+
+  # Token Management
+  tokens:
+    rotation:
+      enabled: true
+      schedule: weekly  # daily, weekly, monthly
+      auto_rotate: false  # Require manual approval
+      notify_before_expiry_days: 7
+      
+    storage:
+      method: environment_variables
+      encrypt_at_rest: true
+      
+  # API Security
+  api:
+    # Authentication
+    authentication:
+      required: true
+      method: bearer_token
+      token_header: "Authorization"
+      
+    # Request validation
+    validation:
+      max_request_size_bytes: 10485760  # 10MB
+      max_context_length: 100000
+      sanitize_inputs: true
+      block_script_injection: true
+      
+    # Rate limiting (additional to rate-limiting.yaml)
+    brute_force_protection:
+      enabled: true
+      max_failed_attempts: 5
+      lockout_duration_seconds: 900  # 15 minutes
+
+  # Audit Logging
+  audit:
+    enabled: true
+    log_level: info
+    events_to_log:
+      - authentication_success
+      - authentication_failure
+      - token_rotation
+      - configuration_change
+      - rate_limit_exceeded
+      - suspicious_activity
+      
+    storage:
+      type: file
+      path: /data/logs/audit.log
+      rotation: daily
+      retention_days: 90
+      
+  # IP Security
+  ip_security:
+    enabled: true
+    mode: allowlist  # allowlist, blocklist
+    
+    # Add trusted IPs
+    allowlist:
+      - "10.0.0.0/8"      # Private networks
+      - "172.16.0.0/12"
+      - "192.168.0.0/16"
+      
+    # Block known bad actors
+    blocklist: []
+    
+    # Tailscale integration
+    tailscale:
+      enabled: true
+      only_tailscale: false  # If true, only allow Tailscale IPs
+      
+  # Content Security
+  content:
+    # Filter sensitive data in logs
+    redact_patterns:
+      - "(?i)api[_-]?key"
+      - "(?i)password"
+      - "(?i)secret"
+      - "(?i)token"
+      - "\\b[A-Za-z0-9]{32,}\\b"  # Long alphanumeric strings
+      
+    # Block harmful content
+    content_filter:
+      enabled: true
+      block_patterns:
+        - "(?i)ignore previous instructions"
+        - "(?i)system prompt"
